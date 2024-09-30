@@ -1,0 +1,83 @@
+import org.json.JSONObject;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
+
+public class ShamirSecretSharing {
+    public static void main(String[] args) {
+        try {
+            // Reading the first test case
+            String testcase1Content = new String(Files.readAllBytes(Paths.get("src/testcase1.json")));
+            // Reading the second test case
+            String testcase2Content = new String(Files.readAllBytes(Paths.get("src/testcase2.json")));
+
+            System.out.println("Testcase 1:");
+            findSecretAndWrongPoints(testcase1Content);
+            
+            System.out.println("\nTestcase 2:");
+            findSecretAndWrongPoints(testcase2Content);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void findSecretAndWrongPoints(String content) {
+        try {
+            // Parse JSON content
+            JSONObject jsonObject = new JSONObject(content);
+
+            // Extract number of roots (n) and minimum roots required (k)
+            JSONObject keys = jsonObject.getJSONObject("keys");
+            int n = keys.getInt("n");
+            int k = keys.getInt("k");
+
+            System.out.println("Number of roots (n): " + n);
+            System.out.println("Minimum number of roots required (k): " + k);
+
+            // Store points (x, y)
+            Map<Integer, Integer> points = new HashMap<>();
+
+            // Loop through each root
+            for (int i = 1; i <= n; i++) {
+                if (jsonObject.has(String.valueOf(i))) {
+                    JSONObject point = jsonObject.getJSONObject(String.valueOf(i));
+                    int base = Integer.parseInt(point.getString("base"));
+                    String value = point.getString("value");
+
+                    // Decode the y value
+                    int decodedValue = Integer.parseInt(value, base);
+                    points.put(i, decodedValue);
+                    System.out.println("Point " + i + ": x = " + i + ", y = " + decodedValue);
+                }
+            }
+
+            // Call a function to calculate the constant term using Lagrange or Matrix method
+            int constant = calculateConstant(points, k);
+            System.out.println("Secret (constant term 'c'): " + constant);
+
+            // Call a function to identify wrong points (if any) in the second test case
+            int wrongPoints = findWrongPoints(points, k);
+            if (wrongPoints == 0) {
+                System.out.println("No wrong points found.");
+            } else {
+                System.out.println("Number of wrong points: " + wrongPoints);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static int calculateConstant(Map<Integer, Integer> points, int k) {
+        // Placeholder function for polynomial interpolation (Lagrange or other)
+        // Implement Lagrange interpolation here to find the constant 'c'
+        return 0;  // Return the calculated constant
+    }
+
+    private static int findWrongPoints(Map<Integer, Integer> points, int k) {
+        // Placeholder function to identify wrong points
+        return 0;  // Return the number of wrong points
+    }
+}
