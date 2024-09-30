@@ -1,0 +1,31 @@
+import java.math.BigInteger;
+import java.util.Map;
+import org.json.JSONObject;
+
+public class ShamirSecretSharing {
+
+    public static void main(String[] args) {
+        String content = new String(Files.readAllBytes(Paths.get("src/testcase1.json")));
+        JSONObject jsonObject = new JSONObject(content);
+
+        findSecretAndWrongPoints(jsonObject);
+    }
+
+    public static void findSecretAndWrongPoints(JSONObject jsonObject) {
+        int n = jsonObject.getJSONObject("keys").getInt("n");
+        int k = jsonObject.getJSONObject("keys").getInt("k");
+
+        for (String key : jsonObject.keySet()) {
+            if (!key.equals("keys")) {
+                JSONObject point = jsonObject.getJSONObject(key);
+                int base = Integer.parseInt(point.getString("base"));
+                String yValue = point.getString("value");
+
+                // Decode yValue using BigInteger
+                BigInteger decodedValue = new BigInteger(yValue, base);
+
+                System.out.println("x: " + key + ", y: " + decodedValue);
+            }
+        }
+    }
+}
